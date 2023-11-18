@@ -24,9 +24,7 @@ export class TestCoverage {
 	 * Gets coverage information for all files.
 	 */
 	public async getAllFiles(token = CancellationToken.None) {
-		if (!this.fileCoverage) {
-			this.fileCoverage = this.accessor.provideFileCoverage(token);
-		}
+		this.fileCoverage ??= this.accessor.provideFileCoverage(token);
 
 		try {
 			return await this.fileCoverage;
@@ -52,7 +50,10 @@ export class FileCoverage {
 	public readonly branch?: ICoveredCount;
 	public readonly function?: ICoveredCount;
 
-	/** Gets the total coverage percent based on information provided. */
+	/**
+	 * Gets the total coverage percent based on information provided.
+	 * This is based on the Clover total coverage formula
+	 */
 	public get tpc() {
 		let numerator = this.statement.covered;
 		let denominator = this.statement.total;
@@ -82,9 +83,7 @@ export class FileCoverage {
 	 * Gets per-line coverage details.
 	 */
 	public async details(token = CancellationToken.None) {
-		if (!this._details) {
-			this._details = this.accessor.resolveFileCoverage(this.index, token);
-		}
+		this._details ??= this.accessor.resolveFileCoverage(this.index, token);
 
 		try {
 			return await this._details;
